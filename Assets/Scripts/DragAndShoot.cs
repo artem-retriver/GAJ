@@ -7,6 +7,8 @@ using TMPro;
 public class DragAndShoot : MonoBehaviour
 {
     public GameObject[] fvxParticle;
+    public Rigidbody[] ragDol;
+    public BoxCollider[] boxCollider;
     public TextMeshProUGUI countLifeText;
     public MainCamera mainCamera;
     public Slingshot slingshot;
@@ -25,6 +27,12 @@ public class DragAndShoot : MonoBehaviour
         Rb = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
         //countLifeText = GetComponent<TextMeshProUGUI>();
+
+        for (int i = 0; i < ragDol.Length; i++)
+        {
+            ragDol[i].isKinematic = false;
+            ragDol[i].gameObject.SetActive(false);
+        }
     }
 
     void FixedUpdate()
@@ -51,6 +59,13 @@ public class DragAndShoot : MonoBehaviour
             countlife--;
             Rb.isKinematic = true;
             fvxParticle[1].SetActive(true);
+            anim.enabled = false;
+            boxCollider[0].isTrigger = true;
+
+            for (int i = 0; i < ragDol.Length; i++)
+            {
+                ragDol[i].gameObject.SetActive(true);
+            }
         }
         else if(collision.gameObject.GetComponent<SafeZone>())
         {
@@ -73,6 +88,14 @@ public class DragAndShoot : MonoBehaviour
 
         _isPressed = true;
         Rb.isKinematic = true;
+
+        //anim.enabled = false;
+
+        //for (int i = 0; i < ragDol.Length; i++)
+        //{
+            //ragDol[i].isKinematic = false;
+        //    ragDol[i].gameObject.SetActive(true);
+        //}
     }
 
     void OnMouseUp()
@@ -91,6 +114,8 @@ public class DragAndShoot : MonoBehaviour
         coll.size = new Vector3(1, 0.5f, 1);
         anim.Play("Flying");
         StartCoroutine(Release());
+
+        
         //StartCoroutine(mainCamera.CloseZoomCamera());
     }
 

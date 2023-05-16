@@ -18,13 +18,13 @@ public class Eagle : MonoBehaviour
             {
                 gameObjects[i].transform.rotation = new Quaternion(0, 0, 0, 0);
                 gameObjects[i].transform.DOMoveZ(534, randomOne);
-                Debug.Log(randomOne);
+                //Debug.Log(randomOne);
             }
             else if (gameObjects[i].transform.position.z == 534)
             {
                 gameObjects[i].transform.rotation = new Quaternion(0, 180, 0, 0);
                 gameObjects[i].transform.DOMoveZ(260, randomTwo);
-                Debug.Log(randomOne);
+                //Debug.Log(randomOne);
             }
         }
         
