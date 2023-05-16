@@ -6,7 +6,7 @@ using TMPro;
 
 public class DragAndShoot : MonoBehaviour
 {
-    //public GameObject[] deathParticle;
+    public GameObject[] fvxParticle;
     public TextMeshProUGUI countLifeText;
     public MainCamera mainCamera;
     public Slingshot slingshot;
@@ -50,7 +50,7 @@ public class DragAndShoot : MonoBehaviour
             Debug.Log("Death");
             countlife--;
             Rb.isKinematic = true;
-            //deathParticle[0].SetActive(true);
+            fvxParticle[1].SetActive(true);
         }
         else if(collision.gameObject.GetComponent<SafeZone>())
         {
@@ -59,7 +59,7 @@ public class DragAndShoot : MonoBehaviour
             anim.Play("Seatled");
             countlife++;
             transform.position = new Vector3(137, 1.062f, 389.982f);
-            //deathParticle[1].SetActive(true);
+            fvxParticle[0].SetActive(true);
             Rb.isKinematic = true;
         }
     }
