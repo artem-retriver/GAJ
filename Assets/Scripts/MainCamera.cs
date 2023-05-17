@@ -12,18 +12,17 @@ public class MainCamera : MonoBehaviour
 
     private void Start()
     {
-        transform.position = new Vector3(transform.position.x, transform.position.y, 320f);
-        StartCoroutine(StartSinema());
+        //transform.position = new Vector3(transform.position.x, transform.position.y, 320f);
+        //StartCoroutine(StartSinema());
     }
 
     private void FixedUpdate()
     {
-        if (character._isWin == true && _isClose == false)
+        if (character._isFlying == true && _isClose == false)
         {
-            transform.DOMoveZ(389.2245f, 0);
-            _isClose = true;
+           
         }
-        else if(character._isWin == transform && _isClose == true)
+        else if(character._isWin == true && _isClose == true)
         {
             StartCoroutine(MoveAfterWin());
         }
@@ -41,6 +40,12 @@ public class MainCamera : MonoBehaviour
             //var endValue = new Vector3(Character.transform.position.x - 17, Character.transform.position.y + 5, Character.transform.position.z - 5);
             //transform.DOMoveX(115, 1.2f);
         }
+    }
+
+    public void MoveAfterUp()
+    {
+        transform.DOMoveZ(389.2245f, 0);
+        _isClose = true;
     }
 
     IEnumerator OffSinema()

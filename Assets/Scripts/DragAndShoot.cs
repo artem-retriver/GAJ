@@ -11,14 +11,19 @@ public class DragAndShoot : MonoBehaviour
     public BoxCollider[] boxCollider;
     public GameObject[] cameraObj;
 
+    //public new Camera camera = new();
     public TextMeshProUGUI countLifeText;
+    public Trajectory trajectory;
     public MainCamera mainCamera;
     public Slingshot slingshot;
     public Rigidbody Rb;
     private Animator anim;
-    //private Collider coll;
+    public SpringJoint springJoint;
+
     readonly float ReleaseTime = 0.15f;
     public int countlife = 1;
+    public float power = 1;
+
     public bool _isPressed;
     public bool _isFired;
     public bool _isFlying;
@@ -28,7 +33,7 @@ public class DragAndShoot : MonoBehaviour
     {
         Rb = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
-        //countLifeText = GetComponent<TextMeshProUGUI>();
+        springJoint = GetComponent<SpringJoint>();
 
         for (int i = 0; i < ragDol.Length; i++)
         {
@@ -43,13 +48,32 @@ public class DragAndShoot : MonoBehaviour
 
         if (_isPressed && !_isFired)
         {
+            Vector3 pos = new(137, 2.852f, 457.57f);
             Vector3 mousePosition = Input.mousePosition;
-            Vector3 worldPosition = Camera.main.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y - 2f, 22f));
+            Vector3 worldPosition = Camera.main.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y - 80f, 22f));
+
+            Vector3 speed = (pos - new Vector3(transform.position.x, transform.position.y + 2, transform.position.z)) * power;
             
             //if (Rb.position.z >= 454f && Rb.position.z <= 462f)
             //{
-                Rb.position = worldPosition;
+            
+            Rb.position = worldPosition;
+            trajectory.ShowTrajectory(pos, speed);
+
             //}
+        }
+
+        if (_isFlying == true)
+        {
+            trajectory.gameObject.SetActive(false);
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.GetComponent<Coin>())
+        {
+            Destroy(other.gameObject);
         }
     }
 
@@ -92,19 +116,12 @@ public class DragAndShoot : MonoBehaviour
 
         _isPressed = true;
         Rb.isKinematic = true;
-
-        //anim.enabled = false;
-
-        //for (int i = 0; i < ragDol.Length; i++)
-        //{
-            //ragDol[i].isKinematic = false;
-        //    ragDol[i].gameObject.SetActive(true);
-        //}
     }
 
+    [System.Obsolete]
     void OnMouseUp()
     {
-        var coll = gameObject.GetComponent<BoxCollider>();
+        //var coll = gameObject.GetComponent<BoxCollider>();
 
         if (_isFired)
         {
@@ -113,25 +130,27 @@ public class DragAndShoot : MonoBehaviour
 
         _isPressed = false;
         Rb.isKinematic = false;
+
+        mainCamera.MoveAfterUp();
+
         cameraObj[0].SetActive(false);
         cameraObj[1].SetActive(true);
         cameraObj[2].SetActive(false);
+
         _isFired = true;
         _isFlying = true;
-        coll.size = new Vector3(1, 0.5f, 1);
-        //anim.enabled = false;
-        anim.Play("Flying");
-        StartCoroutine(Release());
 
-        //StartCoroutine(mainCamera.CloseZoomCamera());
+        boxCollider[0].size = new Vector3(1, 0.5f, 1);
+        anim.Play("Flying");
+
+        StartCoroutine(Release());
     }
 
     IEnumerator IsWin()
     {
         yield return new WaitForSeconds(2f);
-
-        cameraObj[1].SetActive(false);
         cameraObj[0].SetActive(true);
+        cameraObj[1].SetActive(false);
         cameraObj[2].SetActive(true);
         _isWin = true;
     }
