@@ -5,10 +5,10 @@ using DG.Tweening;
 
 public class MainCamera : MonoBehaviour
 {
-    public DragAndShoot Character;
+    public DragAndShoot character;
     public bool _isSinema = true;
-    public bool _isClose;
-    public bool _isFar;
+    public bool _isClose = false;
+    //public bool _isFar;
 
     private void Start()
     {
@@ -18,36 +18,47 @@ public class MainCamera : MonoBehaviour
 
     private void FixedUpdate()
     {
-        //if(transform.position.z == 320 && _isSinema == true)
-        //{
-            
-        //    _isSinema = false;
-        //}
-
-        if(Character._isFlying == true && _isSinema == true)
+        if (character._isWin == true && _isClose == false)
         {
-            var startValue = new Vector3(Character.transform.position.x - 8, Character.transform.position.y + 2, Character.transform.position.z - 7);
-            transform.DOMove(startValue, 1.5f);
-            StartCoroutine(OffSinema());
+            transform.DOMoveZ(389.2245f, 0);
+            _isClose = true;
+        }
+        else if(character._isWin == transform && _isClose == true)
+        {
+            StartCoroutine(MoveAfterWin());
         }
 
-        if(Character._isFlying == true && _isSinema == false)
+        if(character._isFlying == true && _isSinema == true)
         {
-            var endValue = new Vector3(Character.transform.position.x - 17, Character.transform.position.y + 5, Character.transform.position.z - 5);
-            transform.DOMove(endValue, 1.3f);
+            //var zoomX = transform.DOMoveX(Character.transform.position.x - 8, 1.5f);
+            //var startValue = new Vector3(Character.Rb.position.x - 8, Character.Rb.position.y + 2, Character.Rb.position.z);
+            //transform.DOMoveX(125, 1.2f);
+            //StartCoroutine(OffSinema());
+        }
+
+        if(character._isFlying == true && _isSinema == false)
+        {
+            //var endValue = new Vector3(Character.transform.position.x - 17, Character.transform.position.y + 5, Character.transform.position.z - 5);
+            //transform.DOMoveX(115, 1.2f);
         }
     }
 
     IEnumerator OffSinema()
     {
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(1.2f);
         _isSinema = false;
     }
 
-    public IEnumerator CloseZoomCamera()
+    IEnumerator MoveAfterWin()
+    {
+        yield return new WaitForSeconds(0.5f);
+        transform.DOMoveZ(385, 1);
+    }
+
+    /*public IEnumerator CloseZoomCamera()
     {
         yield return new WaitForSeconds(0);
-        var endValue = new Vector3(Character.transform.position.x - 10, Character.transform.position.y + 2, Character.transform.position.z);
+        var endValue = new Vector3(character.transform.position.x - 10, character.transform.position.y + 2, character.transform.position.z);
         transform.DOMove(endValue, 1.5f);
         StartCoroutine(FarZoomCamera());
     }
@@ -55,9 +66,9 @@ public class MainCamera : MonoBehaviour
     public IEnumerator FarZoomCamera()
     {
         yield return new WaitForSeconds(1.5f);
-        var endValue = new Vector3(Character.transform.position.x - 17, Character.transform.position.y + 5, Character.transform.position.z + 3);
+        var endValue = new Vector3(character.transform.position.x - 17, character.transform.position.y + 5, character.transform.position.z + 3);
         transform.DOMove(endValue, 1.5f);
-    }
+    }*/
 
     IEnumerator StartSinema()
     {

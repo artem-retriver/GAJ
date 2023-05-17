@@ -9,6 +9,8 @@ public class DragAndShoot : MonoBehaviour
     public GameObject[] fvxParticle;
     public Rigidbody[] ragDol;
     public BoxCollider[] boxCollider;
+    public GameObject[] cameraObj;
+
     public TextMeshProUGUI countLifeText;
     public MainCamera mainCamera;
     public Slingshot slingshot;
@@ -76,6 +78,8 @@ public class DragAndShoot : MonoBehaviour
             transform.position = new Vector3(137, 1.062f, 389.982f);
             fvxParticle[0].SetActive(true);
             Rb.isKinematic = true;
+
+            StartCoroutine(IsWin());
         }
     }
 
@@ -109,14 +113,27 @@ public class DragAndShoot : MonoBehaviour
 
         _isPressed = false;
         Rb.isKinematic = false;
+        cameraObj[0].SetActive(false);
+        cameraObj[1].SetActive(true);
+        cameraObj[2].SetActive(false);
         _isFired = true;
         _isFlying = true;
         coll.size = new Vector3(1, 0.5f, 1);
+        //anim.enabled = false;
         anim.Play("Flying");
         StartCoroutine(Release());
 
-        
         //StartCoroutine(mainCamera.CloseZoomCamera());
+    }
+
+    IEnumerator IsWin()
+    {
+        yield return new WaitForSeconds(2f);
+
+        cameraObj[1].SetActive(false);
+        cameraObj[0].SetActive(true);
+        cameraObj[2].SetActive(true);
+        _isWin = true;
     }
 
     IEnumerator Release()
