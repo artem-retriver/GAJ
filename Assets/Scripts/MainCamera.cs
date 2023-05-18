@@ -12,8 +12,8 @@ public class MainCamera : MonoBehaviour
 
     private void Start()
     {
-        //transform.position = new Vector3(transform.position.x, transform.position.y, 320f);
-        //StartCoroutine(StartSinema());
+        transform.position = new Vector3(transform.position.x, transform.position.y, 320f);
+        StartCoroutine(StartSinema());
     }
 
     private void FixedUpdate()

@@ -10,6 +10,7 @@ public class DragAndShoot : MonoBehaviour
     public Rigidbody[] ragDol;
     public BoxCollider[] boxCollider;
     public GameObject[] cameraObj;
+    public CharacterCoins[] characterCoins;
 
     //public new Camera camera = new();
     public TextMeshProUGUI countLifeText;
@@ -28,6 +29,8 @@ public class DragAndShoot : MonoBehaviour
     public bool _isFired;
     public bool _isFlying;
     public bool _isWin;
+    public bool _isLose;
+    public bool _isCoin;
 
     private void Start()
     {
@@ -74,6 +77,9 @@ public class DragAndShoot : MonoBehaviour
         if (other.gameObject.GetComponent<Coin>())
         {
             Destroy(other.gameObject);
+            _isCoin = true;
+            //characterCoins[0].gameObject.SetActive(true);
+            characterCoins[0].ActiveObject();
         }
     }
 
@@ -87,6 +93,7 @@ public class DragAndShoot : MonoBehaviour
             fvxParticle[1].SetActive(true);
             anim.enabled = false;
             boxCollider[0].isTrigger = true;
+            _isLose = true;
 
             for (int i = 0; i < ragDol.Length; i++)
             {
