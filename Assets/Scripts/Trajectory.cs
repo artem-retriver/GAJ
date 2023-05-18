@@ -20,7 +20,7 @@ public class Trajectory : MonoBehaviour
         {
             float time = i * 0.05f;
 
-            points[i] = origin + speed * time + Physics.gravity * time;
+            points[i] = origin + speed * time + Physics.gravity * time * time / 2f;
         }
 
         lineRenderer.SetPositions(points);

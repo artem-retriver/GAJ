@@ -18,7 +18,7 @@ public class DragAndShoot : MonoBehaviour
     public MainCamera mainCamera;
     public Slingshot slingshot;
     public Rigidbody Rb;
-    private Animator anim;
+    Animator anim;
     public SpringJoint springJoint;
 
     readonly float ReleaseTime = 0.15f;
@@ -36,7 +36,7 @@ public class DragAndShoot : MonoBehaviour
     {
         Rb = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
-        springJoint = GetComponent<SpringJoint>();
+        //springJoint = GetComponent<SpringJoint>();
 
         for (int i = 0; i < ragDol.Length; i++)
         {
@@ -64,6 +64,11 @@ public class DragAndShoot : MonoBehaviour
             trajectory.ShowTrajectory(pos, speed);
 
             //}
+        }
+
+        if (characterCoins[0]._isWin == true)
+        {
+            StartCoroutine(IsWin());
         }
 
         if (_isFlying == true)
@@ -153,7 +158,7 @@ public class DragAndShoot : MonoBehaviour
         StartCoroutine(Release());
     }
 
-    IEnumerator IsWin()
+    public IEnumerator IsWin()
     {
         yield return new WaitForSeconds(2f);
         cameraObj[0].SetActive(true);
@@ -165,6 +170,7 @@ public class DragAndShoot : MonoBehaviour
     IEnumerator Release()
     {
         yield return new WaitForSeconds(ReleaseTime);
+
         Destroy(GetComponent<SpringJoint>());
     }
 }

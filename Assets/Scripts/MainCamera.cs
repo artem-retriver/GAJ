@@ -22,7 +22,7 @@ public class MainCamera : MonoBehaviour
         {
            
         }
-        else if(character._isWin == true && _isClose == true)
+        else if(character._isWin == true || character.characterCoins[0]._isWin == true)
         {
             StartCoroutine(MoveAfterWin());
         }

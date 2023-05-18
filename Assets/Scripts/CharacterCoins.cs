@@ -11,13 +11,19 @@ public class CharacterCoins : MonoBehaviour
     public SpringJoint springJoint;
     public DragAndShoot dragAnd;
     public SkinnedMeshRenderer meshRenderer;
+
+    BoxCollider boxCollider;
     Rigidbody rb;
     Animator anim;
+
+    public bool _isWin;
     
     void Start()
     {
+        boxCollider = GetComponent<BoxCollider>();
         rb = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
+        transform.DOMoveY(13.55f, 1);
         transform.DOMoveZ(419, 1);
     }
 
@@ -52,6 +58,7 @@ public class CharacterCoins : MonoBehaviour
             transform.position = new Vector3(137, 1.062f, 389.982f);
             fvxParticle[1].SetActive(true);
             rb.isKinematic = true;
+            _isWin = true;
         }
     }
 
@@ -61,6 +68,13 @@ public class CharacterCoins : MonoBehaviour
         anim.Play("Flying");
         rb.isKinematic = false;
         StartCoroutine(DestroySpring());
+        StartCoroutine(WaitBox());
+    }
+
+    IEnumerator WaitBox()
+    {
+        yield return new WaitForSeconds(0.6f);
+        boxCollider.isTrigger = false;
     }
 
     IEnumerator DestroySpring()
