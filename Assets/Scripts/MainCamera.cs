@@ -12,7 +12,7 @@ public class MainCamera : MonoBehaviour
 
     private void Start()
     {
-        transform.position = new Vector3(transform.position.x, transform.position.y, 320f);
+        transform.position = new Vector3(transform.position.x, transform.position.y, 361f);
         StartCoroutine(StartSinema());
     }
 
@@ -78,6 +78,6 @@ public class MainCamera : MonoBehaviour
     IEnumerator StartSinema()
     {
         yield return new WaitForSeconds(2f);
-        transform.DOMoveZ(452, 3);
+        transform.DOMoveZ(452, 4);
     }
 }

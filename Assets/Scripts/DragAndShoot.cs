@@ -11,17 +11,17 @@ public class DragAndShoot : MonoBehaviour
     public BoxCollider[] boxCollider;
     public GameObject[] cameraObj;
     public CharacterCoins[] characterCoins;
+    public GameObject[] slingshot;
 
     //public new Camera camera = new();
     public TextMeshProUGUI countLifeText;
     public Trajectory trajectory;
     public MainCamera mainCamera;
-    public Slingshot slingshot;
-    public Rigidbody Rb;
+    public Rigidbody rb;
     Animator anim;
-    public SpringJoint springJoint;
+    public SpringsJoints[] springJoint;
 
-    readonly float ReleaseTime = 0.15f;
+    readonly float releaseTime = 0.15f;
     public int countlife = 1;
     public float power = 1;
 
@@ -34,7 +34,7 @@ public class DragAndShoot : MonoBehaviour
 
     private void Start()
     {
-        Rb = GetComponent<Rigidbody>();
+        rb = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
         //springJoint = GetComponent<SpringJoint>();
 
@@ -52,16 +52,26 @@ public class DragAndShoot : MonoBehaviour
         if (_isPressed && !_isFired)
         {
             Vector3 pos = new(137, 2.852f, 457.57f);
+            Vector3 pos1 = new(137, 2.852f, 390);
             Vector3 mousePosition = Input.mousePosition;
             Vector3 worldPosition = Camera.main.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y - 80f, 22f));
 
             Vector3 speed = (pos - new Vector3(transform.position.x, transform.position.y + 2, transform.position.z)) * power;
-            
+            Vector3 speed1 = (pos1 - new Vector3(transform.position.x, transform.position.y + 2.5f, transform.position.z)) * power;
+
             //if (Rb.position.z >= 454f && Rb.position.z <= 462f)
             //{
+            rb.position = worldPosition;
+
+            if (_isWin == false)
+            {
+                trajectory.ShowTrajectory(pos, speed);
+            }
+            else
+            {
+                trajectory.ShowTrajectory(pos1, speed1);
+            }
             
-            Rb.position = worldPosition;
-            trajectory.ShowTrajectory(pos, speed);
 
             //}
         }
@@ -86,6 +96,13 @@ public class DragAndShoot : MonoBehaviour
             //characterCoins[0].gameObject.SetActive(true);
             characterCoins[0].ActiveObject();
         }
+
+        if (other.gameObject.GetComponent<SecondLevel>())
+        {
+            cameraObj[1].SetActive(false);
+            cameraObj[2].SetActive(true);
+            cameraObj[3].SetActive(true);
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -94,7 +111,7 @@ public class DragAndShoot : MonoBehaviour
         {
             Debug.Log("Death");
             countlife--;
-            Rb.isKinematic = true;
+            rb.isKinematic = true;
             fvxParticle[1].SetActive(true);
             anim.enabled = false;
             boxCollider[0].isTrigger = true;
@@ -113,7 +130,15 @@ public class DragAndShoot : MonoBehaviour
             countlife++;
             transform.position = new Vector3(137, 1.062f, 389.982f);
             fvxParticle[0].SetActive(true);
-            Rb.isKinematic = true;
+            rb.isKinematic = true;
+
+            slingshot[0].SetActive(false);
+            slingshot[1].SetActive(true);
+            slingshot[2].SetActive(false);
+
+            _isFlying = false;
+            _isPressed = false;
+            _isFired = false;
 
             StartCoroutine(IsWin());
         }
@@ -125,9 +150,10 @@ public class DragAndShoot : MonoBehaviour
         {
             return;
         }
-
+        trajectory.gameObject.SetActive(true);
         _isPressed = true;
-        Rb.isKinematic = true;
+        rb.isKinematic = true;
+        
     }
 
     [System.Obsolete]
@@ -141,7 +167,7 @@ public class DragAndShoot : MonoBehaviour
         }
 
         _isPressed = false;
-        Rb.isKinematic = false;
+        rb.isKinematic = false;
 
         mainCamera.MoveAfterUp();
 
@@ -155,7 +181,14 @@ public class DragAndShoot : MonoBehaviour
         boxCollider[0].size = new Vector3(1, 0.5f, 1);
         anim.Play("Flying");
 
-        StartCoroutine(Release());
+        if (springJoint[0]._isActive == true)
+        {
+            StartCoroutine(ReleaseSecondJoint());
+        }
+        else
+        {
+            StartCoroutine(ReleaseFirstJoint());
+        }
     }
 
     public IEnumerator IsWin()
@@ -164,13 +197,21 @@ public class DragAndShoot : MonoBehaviour
         cameraObj[0].SetActive(true);
         cameraObj[1].SetActive(false);
         cameraObj[2].SetActive(true);
+        
         _isWin = true;
     }
 
-    IEnumerator Release()
+    IEnumerator ReleaseFirstJoint()
     {
-        yield return new WaitForSeconds(ReleaseTime);
+        yield return new WaitForSeconds(releaseTime);
+        springJoint[0]._isActive = true;
+        springJoint[0].gameObject.SetActive(false);
+    }
 
-        Destroy(GetComponent<SpringJoint>());
+    IEnumerator ReleaseSecondJoint()
+    {
+        yield return new WaitForSeconds(releaseTime);
+
+        springJoint[1].gameObject.SetActive(false);
     }
 }
