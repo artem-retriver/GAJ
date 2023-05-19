@@ -5,25 +5,41 @@ using UnityEngine.UI;
 
 public class ProgressBar : MonoBehaviour
 {
-    public GameObject startPos;
-    public GameObject endPos;
+    public Transform startPos;
+    public Transform endPos;
 
     Image progressBar;
     float maxDistance;
+    public bool _isWin;
 
     private void Start()
     {
         progressBar = GetComponent<Image>();
-        maxDistance = endPos.transform.position.z;
-
-        progressBar.fillAmount = startPos.transform.position.z / maxDistance;
+        maxDistance = GetDistance();
     }
 
     private void Update()
     {
-        if (progressBar.fillAmount < 1)
+        float distance = 1 - (GetDistance() / maxDistance);
+        if (startPos.position.z >= endPos.position.z)
         {
-            progressBar.fillAmount = startPos.transform.position.z / maxDistance;
+            
+            SetProgress(distance);
         }
+        else
+        {
+            SetProgress(distance + 1f);
+        }
+    }
+
+    public float GetDistance()
+    {
+        return Vector3.Distance(startPos.position, endPos.position);
+    }
+
+    public void SetProgress(float d)
+    {
+        progressBar.fillAmount = d;
+        Debug.Log(d);
     }
 }
