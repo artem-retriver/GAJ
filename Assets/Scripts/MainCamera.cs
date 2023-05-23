@@ -18,11 +18,12 @@ public class MainCamera : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (character._isFlying == true && _isClose == false)
+        if (character._isSafeZoneEnd == true)
         {
-           
+           MoveAfterSafeZone();
         }
-        else if(character._isWin == true || character.characterCoins[0]._isWin == true)
+
+        if(character._isWin == true || character.characterCoins[0]._isWin == true)
         {
             StartCoroutine(MoveAfterWin());
         }
@@ -45,6 +46,12 @@ public class MainCamera : MonoBehaviour
     public void MoveAfterUp()
     {
         transform.DOMoveZ(389.2245f, 0);
+        _isClose = true;
+    }
+
+    public void MoveAfterSafeZone()
+    {
+        transform.position = new(115, 17, 180);
         _isClose = true;
     }
 

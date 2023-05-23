@@ -40,6 +40,6 @@ public class ProgressBar : MonoBehaviour
     public void SetProgress(float d)
     {
         progressBar.fillAmount = d;
-        Debug.Log(d);
+       // Debug.Log(d);
     }
 }

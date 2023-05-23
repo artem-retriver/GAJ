@@ -7,6 +7,7 @@ using TMPro;
 public class DragAndShoot : MonoBehaviour
 {
     public GameObject[] fvxParticle;
+    public CharacterCoinsTerrain[] characterCoinsTerrain;
     public Rigidbody[] ragDol;
     public BoxCollider[] boxCollider;
     public GameObject[] cameraObj;
@@ -14,6 +15,8 @@ public class DragAndShoot : MonoBehaviour
     public GameObject[] slingshot;
 
     //public new Camera camera = new();
+    //public SwipeController swipeController;
+    public GameObject playerFlying;
     public TextMeshProUGUI countLifeText;
     public Trajectory trajectory;
     public MainCamera mainCamera;
@@ -31,6 +34,7 @@ public class DragAndShoot : MonoBehaviour
     public bool _isWin;
     public bool _isLose;
     public bool _isCoin;
+    public bool _isSafeZoneEnd;
 
     private void Start()
     {
@@ -87,6 +91,7 @@ public class DragAndShoot : MonoBehaviour
         }
     }
 
+    [System.Obsolete]
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.GetComponent<Coin>())
@@ -97,11 +102,31 @@ public class DragAndShoot : MonoBehaviour
             characterCoins[0].ActiveObject();
         }
 
+        if (other.gameObject.GetComponent<CoinTerrain>())
+        {
+            Destroy(other.gameObject);
+            for (int i = 0; i < characterCoinsTerrain.Length; i++)
+            {
+                characterCoinsTerrain[i].gameObject.SetActive(true);
+            }
+        }
+
         if (other.gameObject.GetComponent<SecondLevel>())
         {
             cameraObj[1].SetActive(false);
             cameraObj[2].SetActive(true);
             cameraObj[3].SetActive(true);
+            rb.useGravity = false;
+            rb.isKinematic = false;
+            rb.constraints = RigidbodyConstraints.FreezePositionY;
+            transform.position = new Vector3(135, 10, transform.position.z);
+            
+            GetComponent<SwipeController>().enabled = true;
+            GetComponent<PlayerController>().enabled = true;
+            GetComponent<MoveController>().enabled = true;
+            //GetComponent<DragAndShoot>().enabled = false;
+            //playerFlying.active = true;
+            //gameObject.active = false;
         }
     }
 
@@ -142,6 +167,38 @@ public class DragAndShoot : MonoBehaviour
 
             StartCoroutine(IsWin());
         }
+        else if(collision.gameObject.GetComponent<SafeZoneEnd>())
+        {
+            _isSafeZoneEnd = true;
+            _isWin = false;
+            cameraObj[0].SetActive(true);
+            cameraObj[2].SetActive(true);
+            cameraObj[3].SetActive(false);
+
+            GetComponent<SwipeController>().enabled = false;
+            GetComponent<PlayerController>().enabled = false;
+            GetComponent<MoveController>().enabled = false;
+
+            for (int i = 0; i < characterCoinsTerrain.Length; i++)
+            {
+                characterCoinsTerrain[i].gameObject.SetActive(false);
+
+                if (characterCoinsTerrain[i]._isAlive == true)
+                {
+                    countlife++;
+                }
+            }
+
+            Debug.Log("End Win!!!!!!!!!!!!!!");
+            collision.collider.isTrigger = true;
+            anim.Play("Seatled");
+            //countlife++;
+            transform.position = new Vector3(135, 13.38f, 185.557f);
+            transform.rotation = new Quaternion(0, 179, 0, 0);
+            rb.isKinematic = true;
+
+            
+        }
     }
 
     void OnMouseDown()
@@ -169,7 +226,15 @@ public class DragAndShoot : MonoBehaviour
         _isPressed = false;
         rb.isKinematic = false;
 
+        
+
+        /*if(_isWin == false)
+        {
+            mainCamera.MoveAfterSafeZone();
+        }*/
+
         mainCamera.MoveAfterUp();
+
 
         cameraObj[0].SetActive(false);
         cameraObj[1].SetActive(true);
